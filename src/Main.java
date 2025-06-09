@@ -1,9 +1,12 @@
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    static final int maxNumber = 1000000;
+    static final int maxNumber = 13000000;
+    static final long indexingNumber = 13_000_000_000L;
     public static void main(String[] args) {
         //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
         // to see how IntelliJ IDEA suggests fixing it.
@@ -12,9 +15,9 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int taskNumber = scanner.nextInt();
 
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
-        LinkedList<Integer> linkedList = new LinkedList<>();
-        TreeSet<Integer> treeSet = new TreeSet<>();
+        HashMap<Long, Long> hashMap = new HashMap<>();
+        LinkedList<Long> linkedList = new LinkedList<>();
+        TreeSet<Long> treeSet = new TreeSet<>();
 
         switch (taskNumber) {
             case 1:
@@ -40,112 +43,113 @@ public class Main {
                 break;
         }
     }
-
-    static void fillCollections(HashMap<Integer, Integer> hashMap,
-                                LinkedList<Integer> linkedList, TreeSet<Integer> treeSet) {
-        for (int i = 0; i < maxNumber; i++) {
-            hashMap.put(i, i);
-            linkedList.add(i);
-            treeSet.add(maxNumber-1-i);
+    static void fillCollections(@Nullable HashMap<Long, Long> hashMap,@Nullable LinkedList<Long> linkedList,
+                                @Nullable TreeSet<Long> treeSet, long startIndex, long endIndex)
+    {
+        for (long i = startIndex; i < endIndex; i++) {
+            if (hashMap != null) hashMap.put(i, i);
+            if (linkedList != null && i <= Integer.MAX_VALUE) linkedList.add(i);
+            if (treeSet != null) treeSet.add(i);
         }
     }
 
-    static void compute1(HashMap<Integer, Integer> hashMap, LinkedList<Integer> linkedList, TreeSet<Integer> treeSet)
+    static void compute1(HashMap<Long, Long> hashMap, LinkedList<Long> linkedList, TreeSet<Long> treeSet)
     {
         long start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
+        for (long i = 0; i < maxNumber; i++) {
             hashMap.put(-i, i);
         }
         long end = System.currentTimeMillis();
         System.out.println("HashMap add total time (no head): " + (end - start));
         start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
+        for (long i = 0; i < maxNumber; i++) {
             linkedList.addFirst(i);
         }
         end = System.currentTimeMillis();
         System.out.println("LinkedList add to head total time: " + (end - start));
         start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
+        for (long i = 0; i < maxNumber; i++) {
             treeSet.add(-i);
         }
         end = System.currentTimeMillis();
         System.out.println("TreeSet add to head total time: " + (end - start));
     }
-    static void compute2(HashMap<Integer, Integer> hashMap, LinkedList<Integer> linkedList, TreeSet<Integer> treeSet)
+    static void compute2(HashMap<Long, Long> hashMap, LinkedList<Long> linkedList, TreeSet<Long> treeSet)
     {
         long start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
+        for (long i = 0; i < maxNumber; i++) {
             hashMap.put(i, i);
         }
         long end = System.currentTimeMillis();
         System.out.println("HashMap add total time (no tail): " + (end - start));
         start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
+        for (long i = 0; i < maxNumber; i++) {
             linkedList.addLast(i);
         }
         end = System.currentTimeMillis();
         System.out.println("LinkedList add to tail total time: " + (end - start));
         start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
+        for (long i = 0; i < maxNumber; i++) {
             treeSet.add(i);
         }
         end = System.currentTimeMillis();
         System.out.println("TreeSet add to tail total time: " + (end - start));
     }
-    static void compute3(HashMap<Integer, Integer> hashMap, LinkedList<Integer> linkedList, TreeSet<Integer> treeSet)
+    static void compute3(HashMap<Long, Long> hashMap, LinkedList<Long> linkedList, TreeSet<Long> treeSet)
     {
+        fillCollections(hashMap, linkedList, treeSet, 0, maxNumber/3);
+        fillCollections(hashMap, linkedList, treeSet, maxNumber/3*2, maxNumber);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
-            hashMap.put(i, i);
+        for (long i = 0; i < maxNumber/3; i++) {
+            hashMap.put(maxNumber/3+i, i);
         }
         long end = System.currentTimeMillis();
         System.out.println("HashMap add total time (no index): " + (end - start));
-        fillCollections(hashMap, linkedList, treeSet);
         start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
-            linkedList.add(maxNumber/2 + i/2, i);
+        for (int i = 0; i < maxNumber/3; i++) {
+            linkedList.add(maxNumber/3+i, (long)i);
         }
         end = System.currentTimeMillis();
         System.out.println("LinkedList add in the middle total time: " + (end - start));
         treeSet.clear();
-        for (int i = 0; i < maxNumber; i++) {
+        for (long i = 0; i < maxNumber/2; i++) {
             treeSet.add(i);
-            treeSet.add(maxNumber*2 + i);
+            treeSet.add(maxNumber + i);
         }
         start = System.currentTimeMillis();
-        for (int i = maxNumber; i < 2*maxNumber; i++) {
+        for (long i = maxNumber/3; i < maxNumber*2/3; i++) {
             treeSet.add(i);
         }
         end = System.currentTimeMillis();
         System.out.println("TreeSet add in the middle total time: " + (end - start));
     }
-    static void compute4(HashMap<Integer, Integer> hashMap, LinkedList<Integer> linkedList, TreeSet<Integer> treeSet)
+    static void compute4(HashMap<Long, Long> hashMap, LinkedList<Long> linkedList, TreeSet<Long> treeSet)
     {
-        fillCollections(hashMap, linkedList, treeSet);
+        fillCollections(hashMap, linkedList, treeSet, 0, maxNumber);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
+        for (long i = 0; i < maxNumber; i++) {
             hashMap.remove(i);
         }
         long end = System.currentTimeMillis();
         System.out.println("HashMap remove total time (no order): " + (end - start));
         start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
+        for (long i = 0; i < maxNumber; i++) {
             linkedList.removeFirst();
         }
         end = System.currentTimeMillis();
         System.out.println("LinkedList remove first total time: " + (end - start));
         start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) {
+        for (long i = 0; i < maxNumber; i++) {
             treeSet.removeFirst();
         }
         end = System.currentTimeMillis();
         System.out.println("TreeSet remove first total time: " + (end - start));
     }
-    static void compute5(HashMap<Integer, Integer> hashMap, LinkedList<Integer> linkedList, TreeSet<Integer> treeSet)
+    static void compute5(HashMap<Long, Long> hashMap, LinkedList<Long> linkedList, TreeSet<Long> treeSet)
     {
-        fillCollections(hashMap, linkedList, treeSet);
+        fillCollections(hashMap, linkedList, treeSet, 0, maxNumber);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) hashMap.remove(i);
+        for (long i = 0; i < maxNumber; i++) hashMap.remove(i);
         long end = System.currentTimeMillis();
         System.out.println("HashMap remove total time (no order): " + (end - start));
         start = System.currentTimeMillis();
@@ -157,39 +161,37 @@ public class Main {
         end = System.currentTimeMillis();
         System.out.println("TreeSet remove last total time: " + (end - start));
     }
-    static void compute6(HashMap<Integer, Integer> hashMap, LinkedList<Integer> linkedList, TreeSet<Integer> treeSet)
+    static void compute6(HashMap<Long, Long> hashMap, LinkedList<Long> linkedList, TreeSet<Long> treeSet)
     {
-        fillCollections(hashMap, linkedList, treeSet);
+        fillCollections(hashMap, linkedList, treeSet, 0, maxNumber);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) hashMap.remove(i);
+        for (long i = 0; i < maxNumber/2; i++) hashMap.remove(maxNumber/2-i);
         long end = System.currentTimeMillis();
         System.out.println("HashMap remove total time (no order): " + (end - start));
 
-        for (int i = 0; i <= maxNumber; i++) {
-            linkedList.add(i);
-        }
         start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber-20; i++) linkedList.remove(maxNumber/2);
+        for (int i = 0; i < maxNumber/2; i++) linkedList.remove(maxNumber/2);
         end = System.currentTimeMillis();
         System.out.println("LinkedList remove from the middle total time: " + (end - start));
 
         start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber-20; i++) treeSet.remove(i+10);
+        for (long i = 0; i < maxNumber/2; i++) treeSet.remove(i+maxNumber/2);
         end = System.currentTimeMillis();
         System.out.println("TreeSet remove from the middle total time: " + (end - start));
     }
-    static void compute7(HashMap<Integer, Integer> hashMap, LinkedList<Integer> linkedList, TreeSet<Integer> treeSet)
+    static void compute7(HashMap<Long, Long> hashMap, LinkedList<Long> linkedList, TreeSet<Long> treeSet)
     {
-        fillCollections(hashMap, linkedList, treeSet);
+        fillCollections(hashMap, linkedList, treeSet,  0, indexingNumber);
         long start = System.currentTimeMillis();
-        int currentValue = 0;
-        for (int i = 0; i < maxNumber; i++) currentValue = hashMap.get(i);
+        long currentValue = 0;
+        for (long i = 0; i < indexingNumber; i++) currentValue = hashMap.get(i);
         long end = System.currentTimeMillis();
         System.out.println("HashMap get by index total time: " + (end - start));
         start = System.currentTimeMillis();
-        for (int i = 0; i < maxNumber; i++) currentValue = linkedList.get(i);
+        int maxIndexForList = Integer.MAX_VALUE;
+        for (int i = 0; i < maxIndexForList; i++) currentValue = linkedList.get(i);
         end = System.currentTimeMillis();
-        System.out.println("LinkedList get by index total time: " + (end - start));
+        System.out.println("LinkedList get by index total time (max collection size): " + (end - start));
         boolean contains = false;
         start = System.currentTimeMillis();
         for (int i = 0; i < maxNumber; i++) contains = treeSet.contains(i);
